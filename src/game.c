@@ -18,6 +18,12 @@ int ball_dx, ball_dy;
 int paddle1_y, paddle2_y;
 int score1, score2;
 
+// AI specific variables
+// static int ai_move_counter = 0; // Removed as per previous revert
+
+// Ball reset timer
+static int ball_reset_timer = 0;
+
 // Resets the ball's position and direction
 void reset_ball()
 {
@@ -25,6 +31,7 @@ void reset_ball()
     ball_y = HEIGHT / 2;
     ball_dx = (rand() % 2 == 0) ? 2 : -2; // Increased initial horizontal speed
     ball_dy = (rand() % 2 == 0) ? 2 : -2; // Increased initial vertical speed
+    ball_reset_timer = 40;                // 40 * 50ms = 2 seconds delay
 }
 
 // Initializes game variables to their starting values
@@ -112,6 +119,12 @@ void input()
 // Updates game state and logic
 void logic()
 {
+    if (ball_reset_timer > 0)
+    {
+        ball_reset_timer--;
+        return; // Don't move ball if timer is active
+    }
+
     ball_x += ball_dx; // Move ball horizontally
     ball_y += ball_dy; // Move ball vertically
 
@@ -134,6 +147,10 @@ void logic()
         if (paddle2_y + AI_PADDLE_SPEED + PADDLE_HEIGHT < HEIGHT - 1)
         { // Ensure paddle doesn't go below bottom border
             paddle2_y += AI_PADDLE_SPEED;
+        }
+        else
+        {
+            paddle2_y = HEIGHT - 1 - PADDLE_HEIGHT; // Snap to border
         }
     }
     else if (ball_y + 1 < paddle2_y + 1 + PADDLE_HEIGHT / 2)
