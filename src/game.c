@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <wchar.h>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -30,16 +31,36 @@ void setup() {
     srand(time(NULL)); // Seed random number generator
 }
 
-// Draws the game board and elements to the buffer
-void draw() {
-    // Clear the buffer with spaces
-    for (int y = 0; y < HEIGHT; y++) {
-        for (int x = 0; x < WIDTH; x++) {
-            terminal_write_char_to_buffer(x, y, L' '); // Use L' ' for wide space
-        }
+// Renders the game borders to the buffer
+void render_borders() {
+    // Draw top border
+    terminal_write_char_to_buffer(0, 1, 0x250C); // Top-left corner
+    for (int i = 1; i < WIDTH - 1; i++) {
+        terminal_write_char_to_buffer(i, 1, 0x2500); // Horizontal line
+    }
+    terminal_write_char_to_buffer(WIDTH - 1, 1, 0x2510); // Top-right corner
+
+    // Draw side borders
+    for (int y = 2; y < HEIGHT - 1; y++) {
+        terminal_write_char_to_buffer(0, y, 0x2502); // Left vertical line
+        terminal_write_char_to_buffer(WIDTH - 1, y, 0x2502); // Right vertical line
     }
 
-    // Draw scores at the top
+    // Draw bottom border
+    terminal_write_char_to_buffer(0, HEIGHT - 1, 0x2514); // Bottom-left corner
+    for (int i = 1; i < WIDTH - 1; i++) {
+        terminal_write_char_to_buffer(i, HEIGHT - 1, 0x2500); // Horizontal line
+    }
+    terminal_write_char_to_buffer(WIDTH - 1, HEIGHT - 1, 0x2518); // Bottom-right corner
+}
+
+// Renders the ball to the buffer
+void render_ball() {
+    terminal_write_char_to_buffer(ball_x, ball_y + 1, 0x2022); // U+2022 for bullet
+}
+
+// Renders the player scores to the buffer
+void render_scores() {
     // Player 1 score (left half)
     wchar_t score1_str[20];
     swprintf(score1_str, sizeof(score1_str)/sizeof(wchar_t), L"P1: %d", score1);
@@ -57,29 +78,20 @@ void draw() {
     for (int i = 0; i < score2_len; i++) {
         terminal_write_char_to_buffer(score2_x + i, 0, score2_str[i]);
     }
+}
 
-    // Draw top border (shifted down by 1)
-    terminal_write_char_to_buffer(0, 1, 0x250C); // Top-left corner
-    for (int i = 1; i < WIDTH - 1; i++) {
-        terminal_write_char_to_buffer(i, 1, 0x2500); // Horizontal line
-    }
-    terminal_write_char_to_buffer(WIDTH - 1, 1, 0x2510); // Top-right corner
-
-    // Draw side borders (shifted down by 1)
-    for (int y = 2; y < HEIGHT - 1; y++) {
-        terminal_write_char_to_buffer(0, y, 0x2502); // Left vertical line
-        terminal_write_char_to_buffer(WIDTH - 1, y, 0x2502); // Right vertical line
+// Draws the game board and elements to the buffer
+void draw() {
+    // Clear the buffer with spaces
+    for (int y = 0; y < HEIGHT; y++) {
+        for (int x = 0; x < WIDTH; x++) {
+            terminal_write_char_to_buffer(x, y, L' '); // Use L' ' for wide space
+        }
     }
 
-    // Draw bottom border (shifted down by 1)
-    terminal_write_char_to_buffer(0, HEIGHT - 1, 0x2514); // Bottom-left corner
-    for (int i = 1; i < WIDTH - 1; i++) {
-        terminal_write_char_to_buffer(i, HEIGHT - 1, 0x2500); // Horizontal line
-    }
-    terminal_write_char_to_buffer(WIDTH - 1, HEIGHT - 1, 0x2518); // Bottom-right corner
-
-    // Draw ball to buffer using Unicode bullet point (shifted down by 1)
-    terminal_write_char_to_buffer(ball_x, ball_y + 1, 0x2022); // U+2022 for bullet
+    render_borders();
+    render_ball();
+    render_scores();
 
     terminal_print_buffer(); // Print the entire buffer to the console
 }
