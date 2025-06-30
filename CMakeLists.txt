@@ -10,4 +10,4 @@ set(CMAKE_C_STANDARD 99)
 include_directories(src)
 
 # Add the executable and specify its source file
-add_executable(pong src/main.c src/game.c)
+add_executable(pong src/main.c src/game.c src/terminal.c)
