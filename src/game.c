@@ -78,20 +78,71 @@ void draw()
     printf("\033[2J\033[H"); // ANSI escape codes: clear screen, move cursor home
 #endif
 
-    printf("Hello, World!\n");
+    // Draw top wall
+    for (int i = 0; i < WIDTH; i++)
+    {
+        printf("#");
+    }
+    printf("\n");
+
+    // Draw game area borders
+    for (int y = 0; y < HEIGHT; y++)
+    {
+        for (int x = 0; x < WIDTH; x++)
+        {
+            if (x == 0 || x == WIDTH - 1)
+            { // Left and right borders
+                printf("|");
+            }
+            else
+            {
+                printf(" "); // Empty space
+            }
+        }
+        printf("\n");
+    }
+
+    // Draw bottom wall
+    for (int i = 0; i < WIDTH; i++)
+    {
+        printf("#");
+    }
+    printf("\n");
 }
 
-// Initializes the game: sets up terminal and game state
+// Handles user input (to be implemented)
+void input()
+{
+    // Placeholder for input handling
+}
+
+// Updates game state and logic (to be implemented)
+void logic()
+{
+    // Placeholder for game logic
+}
+
+// Initializes the game: terminal setup and game state
 void game_init()
 {
     setup_terminal();
     setup();
 }
 
-// Main game loop (currently just draws once)
+// Main game loop: continuously draws the game
 void game_run()
 {
-    draw();
+    while (1)
+    {           // Infinite loop for the game
+        draw(); // Redraw the game screen
+
+        // Game loop delay to control speed
+#ifdef _WIN32
+        Sleep(50); // Windows: 50 milliseconds
+#else
+        usleep(50000); // Unix-like: 50,000 microseconds (50 ms)
+#endif
+    }
 }
 
 // Shuts down the game: restores terminal to its original state
