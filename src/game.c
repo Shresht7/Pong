@@ -39,28 +39,47 @@ void draw() {
         }
     }
 
-    // Draw top border
-    terminal_write_char_to_buffer(0, 0, 0x250C); // Top-left corner
-    for (int i = 1; i < WIDTH - 1; i++) {
-        terminal_write_char_to_buffer(i, 0, 0x2500); // Horizontal line
+    // Draw scores at the top
+    // Player 1 score (left half)
+    wchar_t score1_str[20];
+    swprintf(score1_str, sizeof(score1_str)/sizeof(wchar_t), L"P1: %d", score1);
+    int score1_len = wcslen(score1_str);
+    int score1_x = (WIDTH / 2 - score1_len) / 2;
+    for (int i = 0; i < score1_len; i++) {
+        terminal_write_char_to_buffer(score1_x + i, 0, score1_str[i]);
     }
-    terminal_write_char_to_buffer(WIDTH - 1, 0, 0x2510); // Top-right corner
 
-    // Draw side borders
-    for (int y = 1; y < HEIGHT - 1; y++) {
+    // Player 2 score (right half)
+    wchar_t score2_str[20];
+    swprintf(score2_str, sizeof(score2_str)/sizeof(wchar_t), L"P2: %d", score2);
+    int score2_len = wcslen(score2_str);
+    int score2_x = WIDTH / 2 + (WIDTH / 2 - score2_len) / 2;
+    for (int i = 0; i < score2_len; i++) {
+        terminal_write_char_to_buffer(score2_x + i, 0, score2_str[i]);
+    }
+
+    // Draw top border (shifted down by 1)
+    terminal_write_char_to_buffer(0, 1, 0x250C); // Top-left corner
+    for (int i = 1; i < WIDTH - 1; i++) {
+        terminal_write_char_to_buffer(i, 1, 0x2500); // Horizontal line
+    }
+    terminal_write_char_to_buffer(WIDTH - 1, 1, 0x2510); // Top-right corner
+
+    // Draw side borders (shifted down by 1)
+    for (int y = 2; y < HEIGHT - 1; y++) {
         terminal_write_char_to_buffer(0, y, 0x2502); // Left vertical line
         terminal_write_char_to_buffer(WIDTH - 1, y, 0x2502); // Right vertical line
     }
 
-    // Draw bottom border
+    // Draw bottom border (shifted down by 1)
     terminal_write_char_to_buffer(0, HEIGHT - 1, 0x2514); // Bottom-left corner
     for (int i = 1; i < WIDTH - 1; i++) {
         terminal_write_char_to_buffer(i, HEIGHT - 1, 0x2500); // Horizontal line
     }
     terminal_write_char_to_buffer(WIDTH - 1, HEIGHT - 1, 0x2518); // Bottom-right corner
 
-    // Draw ball to buffer using Unicode bullet point
-    terminal_write_char_to_buffer(ball_x, ball_y, 0x2022); // U+2022 for bullet
+    // Draw ball to buffer using Unicode bullet point (shifted down by 1)
+    terminal_write_char_to_buffer(ball_x, ball_y + 1, 0x2022); // U+2022 for bullet
 
     terminal_print_buffer(); // Print the entire buffer to the console
 }
@@ -75,8 +94,8 @@ void logic() {
     ball_x += ball_dx; // Move ball horizontally
     ball_y += ball_dy; // Move ball vertically
 
-    // Ball collision with top and bottom walls
-    if (ball_y <= 0 || ball_y >= HEIGHT - 1) {
+    // Ball collision with top and bottom walls (adjusted for shifted game area)
+    if (ball_y <= 0 || ball_y >= HEIGHT - 2) { // HEIGHT - 2 because top border is at y=1, bottom at HEIGHT-1
         ball_dy *= -1; // Reverse vertical direction
     }
 }
