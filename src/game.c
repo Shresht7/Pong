@@ -66,9 +66,15 @@ void input() {
     // Placeholder for input handling
 }
 
-// Updates game state and logic (to be implemented)
+// Updates game state and logic
 void logic() {
-    // Placeholder for game logic
+    ball_x += ball_dx; // Move ball horizontally
+    ball_y += ball_dy; // Move ball vertically
+
+    // Ball collision with top and bottom walls
+    if (ball_y <= 0 || ball_y >= HEIGHT - 1) {
+        ball_dy *= -1; // Reverse vertical direction
+    }
 }
 
 // Initializes the game: terminal setup, buffer setup, and game state
@@ -83,6 +89,8 @@ void game_init() {
 void game_run() {
     while (1) {
         draw();
+        input(); // Call input handler
+        logic(); // Call game logic updater
 
 #ifdef _WIN32
         Sleep(50);
