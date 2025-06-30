@@ -36,6 +36,19 @@ void render_ball() {
     terminal_write_char_to_buffer(ball_x, ball_y + 1, 0x2022); // U+2022 for bullet
 }
 
+// Renders the paddles to the buffer
+void render_paddles() {
+    // Paddle 1 (left)
+    for (int i = 0; i < PADDLE_HEIGHT; i++) {
+        terminal_write_char_to_buffer(1, paddle1_y + 1 + i, 0x2588); // U+2588 for Full Block
+    }
+
+    // Paddle 2 (right)
+    for (int i = 0; i < PADDLE_HEIGHT; i++) {
+        terminal_write_char_to_buffer(WIDTH - 2, paddle2_y + 1 + i, 0x2588); // U+2588 for Full Block
+    }
+}
+
 // Renders the player scores to the buffer
 void render_scores() {
     // Player 1 score (left half)
