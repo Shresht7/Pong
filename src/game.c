@@ -17,12 +17,17 @@ int ball_dx, ball_dy;
 int paddle1_y, paddle2_y;
 int score1, score2;
 
-// Initializes game variables to their starting values
-void setup() {
+// Resets the ball's position and direction
+void reset_ball() {
     ball_x = WIDTH / 2;
     ball_y = HEIGHT / 2;
-    ball_dx = 1;
-    ball_dy = 1;
+    ball_dx = (rand() % 2 == 0) ? 1 : -1; // Random initial horizontal direction
+    ball_dy = (rand() % 2 == 0) ? 1 : -1; // Random initial vertical direction
+}
+
+// Initializes game variables to their starting values
+void setup() {
+    reset_ball(); // Reset ball position and direction
     paddle1_y = HEIGHT / 2 - PADDLE_HEIGHT / 2;
     paddle2_y = HEIGHT / 2 - PADDLE_HEIGHT / 2;
     score1 = 0;
@@ -97,6 +102,16 @@ void logic() {
     // Ball collision with right paddle
     if (ball_x == WIDTH - 3 && ball_y >= paddle2_y + 1 && ball_y < paddle2_y + 1 + PADDLE_HEIGHT) {
         ball_dx *= -1; // Reverse horizontal direction
+    }
+
+    // Scoring
+    if (ball_x <= 1) { // Ball went past left paddle
+        score2++;
+        reset_ball(); // Reset ball only
+    }
+    if (ball_x >= WIDTH - 2) { // Ball went past right paddle
+        score1++;
+        reset_ball(); // Reset ball only
     }
 }
 
