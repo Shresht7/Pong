@@ -18,11 +18,8 @@ int ball_dx, ball_dy;
 int paddle1_y, paddle2_y;
 int score1, score2;
 
-// AI specific variables
-// static int ai_move_counter = 0; // Removed as per previous revert
-
 // Ball reset timer
-static int ball_reset_timer = 0;
+int ball_reset_timer = 0;
 
 // Resets the ball's position and direction
 void reset_ball()
@@ -85,35 +82,39 @@ void input()
             paddle1_y++;
         }
         break;
-    case 27:  // ESC key to exit
-    case 'q': // 'q' key to exit
-    {
-        terminal_clear_screen(); // Clear screen for game over message
-        wchar_t message[50];
-        if (score1 > score2)
-        {
-            swprintf(message, sizeof(message) / sizeof(wchar_t), L"Player 1 Wins! Final Score: %d - %d", score1, score2);
-        }
-        else if (score2 > score1)
-        {
-            swprintf(message, sizeof(message) / sizeof(wchar_t), L"Player 2 Wins! Final Score: %d - %d", score2, score1);
-        }
-        else
-        {
-            swprintf(message, sizeof(message) / sizeof(wchar_t), L"It's a Draw! Final Score: %d - %d", score1, score2);
-        }
-
-        int msg_len = wcslen(message);
-        int msg_x = (WIDTH - msg_len) / 2;
-        int msg_y = HEIGHT / 2;
-
-        terminal_goto_xy(msg_x, msg_y);
-        wprintf(L"%ls", message);
-
-        exit(0); // Exit the game immediately
+    case 27:         // ESC key to exit
+    case 'q':        // 'q' key to exit
+        game_over(); // Call game_over function
         break;
     }
+}
+
+// Displays game over message and exits
+void game_over()
+{
+    terminal_clear_screen(); // Clear screen for game over message
+    wchar_t message[50];
+    if (score1 >= MAX_SCORE)
+    {
+        swprintf(message, sizeof(message) / sizeof(wchar_t), L"Player 1 Wins! Final Score: %d - %d", score1, score2);
     }
+    else if (score2 >= MAX_SCORE)
+    {
+        swprintf(message, sizeof(message) / sizeof(wchar_t), L"Player 2 Wins! Final Score: %d - %d", score2, score1);
+    }
+    else
+    {
+        swprintf(message, sizeof(message) / sizeof(wchar_t), L"Game Over! Final Score: %d - %d", score1, score2);
+    }
+
+    int msg_len = wcslen(message);
+    int msg_x = (WIDTH - msg_len) / 2;
+    int msg_y = HEIGHT / 2;
+
+    terminal_goto_xy(msg_x, msg_y);
+    wprintf(L"%ls", message);
+
+    exit(0); // Exit the game immediately
 }
 
 // Updates game state and logic
@@ -173,11 +174,19 @@ void logic()
     {
         score2++;
         reset_ball(); // Reset ball only
+        if (score2 >= MAX_SCORE)
+        {
+            game_over();
+        }
     }
     if (ball_x >= WIDTH - 2)
     {
         score1++;
         reset_ball(); // Reset ball only
+        if (score1 >= MAX_SCORE)
+        {
+            game_over();
+        }
     }
 }
 
