@@ -42,7 +42,7 @@ void draw() {
 
     render_borders();
     render_ball();
-    render_paddles(); // Call the new render_paddles function
+    render_paddles();
     render_scores();
 
     terminal_print_buffer(); // Print the entire buffer to the console
@@ -85,8 +85,18 @@ void logic() {
     ball_y += ball_dy; // Move ball vertically
 
     // Ball collision with top and bottom walls (adjusted for shifted game area)
-    if (ball_y <= 0 || ball_y >= HEIGHT - 2) { // HEIGHT - 2 because top border is at y=1, bottom at HEIGHT-1
+    if (ball_y <= 1 || ball_y >= HEIGHT - 2) { // Top border is at y=1, bottom at HEIGHT-1
         ball_dy *= -1; // Reverse vertical direction
+    }
+
+    // Ball collision with left paddle
+    if (ball_x == 2 && ball_y >= paddle1_y + 1 && ball_y < paddle1_y + 1 + PADDLE_HEIGHT) {
+        ball_dx *= -1; // Reverse horizontal direction
+    }
+
+    // Ball collision with right paddle
+    if (ball_x == WIDTH - 3 && ball_y >= paddle2_y + 1 && ball_y < paddle2_y + 1 + PADDLE_HEIGHT) {
+        ball_dx *= -1; // Reverse horizontal direction
     }
 }
 
