@@ -6,5 +6,8 @@ project(Pong C)
 # Set the C standard to C99
 set(CMAKE_C_STANDARD 99)
 
+# Add include directory
+include_directories(src)
+
 # Add the executable and specify its source file
-add_executable(pong main.c game.c)
+add_executable(pong src/main.c src/game.c)
