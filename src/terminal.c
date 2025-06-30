@@ -6,9 +6,12 @@
 
 #ifdef _WIN32
 #include <windows.h>
+#include <conio.h> // For _kbhit and _getch
 #else
 #include <termios.h>
 #include <unistd.h>
+#include <fcntl.h>      // For fcntl
+#include <sys/select.h> // For select
 #endif
 
 // Platform-specific variables for terminal control
@@ -20,12 +23,13 @@ static struct termios original_termios;
 #endif
 
 // Double buffering variables
-static wchar_t** buffer = NULL; // Use wchar_t for buffer
+static wchar_t **buffer = NULL; // Use wchar_t for buffer
 static int buffer_width = 0;
 static int buffer_height = 0;
 
 // Sets up the terminal for raw mode (disables echoing, line buffering)
-void terminal_setup() {
+void terminal_setup()
+{
 #ifdef _WIN32
     hConsole = GetStdHandle(STD_INPUT_HANDLE);
     GetConsoleMode(hConsole, &original_console_mode);
@@ -42,7 +46,8 @@ void terminal_setup() {
 }
 
 // Restores the terminal to its original mode
-void terminal_restore() {
+void terminal_restore()
+{
 #ifdef _WIN32
     SetConsoleMode(hConsole, original_console_mode);
     SetConsoleOutputCP(437); // Restore default code page
@@ -52,7 +57,8 @@ void terminal_restore() {
 }
 
 // Clears the terminal screen
-void terminal_clear_screen() {
+void terminal_clear_screen()
+{
 #ifdef _WIN32
     system("cls");
 #else
@@ -61,7 +67,8 @@ void terminal_clear_screen() {
 }
 
 // Moves the cursor to a specific (x, y) position
-void terminal_goto_xy(int x, int y) {
+void terminal_goto_xy(int x, int y)
+{
 #ifdef _WIN32
     COORD coord = {(SHORT)x, (SHORT)y};
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
@@ -71,23 +78,28 @@ void terminal_goto_xy(int x, int y) {
 }
 
 // Hides the terminal cursor
-void terminal_hide_cursor() {
+void terminal_hide_cursor()
+{
     wprintf(L"\033[?25l"); // ANSI escape code to hide cursor
 }
 
 // Shows the terminal cursor
-void terminal_show_cursor() {
+void terminal_show_cursor()
+{
     wprintf(L"\033[?25h"); // ANSI escape code to show cursor
 }
 
 // Initializes the double buffer
-void terminal_init_buffer(int width, int height) {
+void terminal_init_buffer(int width, int height)
+{
     buffer_width = width;
     buffer_height = height;
-    buffer = (wchar_t**)malloc(height * sizeof(wchar_t*));
-    for (int i = 0; i < height; i++) {
-        buffer[i] = (wchar_t*)malloc((width + 1) * sizeof(wchar_t)); // +1 for null terminator
-        for (int j = 0; j < width; j++) {
+    buffer = (wchar_t **)malloc(height * sizeof(wchar_t *));
+    for (int i = 0; i < height; i++)
+    {
+        buffer[i] = (wchar_t *)malloc((width + 1) * sizeof(wchar_t)); // +1 for null terminator
+        for (int j = 0; j < width; j++)
+        {
             buffer[i][j] = L' '; // Initialize with wide spaces
         }
         buffer[i][width] = L'\0'; // Null-terminate each row with wide null
@@ -95,9 +107,12 @@ void terminal_init_buffer(int width, int height) {
 }
 
 // Destroys the double buffer and frees memory
-void terminal_destroy_buffer() {
-    if (buffer) {
-        for (int i = 0; i < buffer_height; i++) {
+void terminal_destroy_buffer()
+{
+    if (buffer)
+    {
+        for (int i = 0; i < buffer_height; i++)
+        {
             free(buffer[i]);
         }
         free(buffer);
@@ -106,16 +121,45 @@ void terminal_destroy_buffer() {
 }
 
 // Writes a character to the buffer at a specific position
-void terminal_write_char_to_buffer(int x, int y, wchar_t c) {
-    if (x >= 0 && x < buffer_width && y >= 0 && y < buffer_height) {
+void terminal_write_char_to_buffer(int x, int y, wchar_t c)
+{
+    if (x >= 0 && x < buffer_width && y >= 0 && y < buffer_height)
+    {
         buffer[y][x] = c;
     }
 }
 
 // Prints the entire buffer to the console
-void terminal_print_buffer() {
+void terminal_print_buffer()
+{
     terminal_goto_xy(0, 0); // Move cursor to top-left before printing
-    for (int i = 0; i < buffer_height; i++) {
+    for (int i = 0; i < buffer_height; i++)
+    {
         wprintf(L"%ls\n", buffer[i]); // Use wprintf for wide string
     }
+}
+
+// Reads a key press without blocking
+int terminal_read_key()
+{
+#ifdef _WIN32
+    if (_kbhit())
+    {
+        return _getch();
+    }
+#else
+    struct timeval tv = {0L, 0L};
+    fd_set fds;
+    FD_ZERO(&fds);
+    FD_SET(STDIN_FILENO, &fds);
+    if (select(STDIN_FILENO + 1, &fds, NULL, NULL, &tv) > 0)
+    {
+        char c;
+        if (read(STDIN_FILENO, &c, 1) == 1)
+        {
+            return c;
+        }
+    }
+#endif
+    return -1; // No key pressed
 }

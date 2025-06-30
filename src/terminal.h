@@ -16,7 +16,10 @@ void terminal_show_cursor();
 // Double buffering functions
 void terminal_init_buffer(int width, int height);
 void terminal_destroy_buffer();
-void terminal_write_char_to_buffer(int x, int y, wchar_t c); // Use wchar_t
+void terminal_write_char_to_buffer(int x, int y, wchar_t c);
 void terminal_print_buffer();
+
+// Non-blocking input function
+int terminal_read_key(); // Returns key code or -1 if no key pressed
 
 #endif // TERMINAL_H
