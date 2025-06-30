@@ -17,7 +17,8 @@ static struct termios original_termios;
 #endif
 
 // Sets up the terminal for raw mode (disables echoing, line buffering)
-void terminal_setup() {
+void terminal_setup()
+{
 #ifdef _WIN32
     hConsole = GetStdHandle(STD_INPUT_HANDLE);
     GetConsoleMode(hConsole, &original_console_mode);
@@ -31,7 +32,8 @@ void terminal_setup() {
 }
 
 // Restores the terminal to its original mode
-void terminal_restore() {
+void terminal_restore()
+{
 #ifdef _WIN32
     SetConsoleMode(hConsole, original_console_mode);
 #else
@@ -40,7 +42,8 @@ void terminal_restore() {
 }
 
 // Clears the terminal screen
-void terminal_clear_screen() {
+void terminal_clear_screen()
+{
 #ifdef _WIN32
     system("cls");
 #else
@@ -49,11 +52,24 @@ void terminal_clear_screen() {
 }
 
 // Moves the cursor to a specific (x, y) position
-void terminal_goto_xy(int x, int y) {
+void terminal_goto_xy(int x, int y)
+{
 #ifdef _WIN32
     COORD coord = {(SHORT)x, (SHORT)y};
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 #else
     printf("\033[%d;%dH", y + 1, x + 1);
 #endif
+}
+
+// Hides the terminal cursor
+void terminal_hide_cursor()
+{
+    printf("\033[?25l"); // ANSI escape code to hide cursor
+}
+
+// Shows the terminal cursor
+void terminal_show_cursor()
+{
+    printf("\033[?25h"); // ANSI escape code to show cursor
 }

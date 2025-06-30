@@ -73,6 +73,7 @@ void logic() {
 // Initializes the game: terminal setup and game state
 void game_init() {
     terminal_setup(); // Setup terminal using terminal module
+    terminal_hide_cursor(); // Hide cursor
     setup();
 }
 
@@ -93,4 +94,5 @@ void game_run() {
 // Shuts down the game: restores terminal settings
 void game_shutdown() {
     terminal_restore(); // Restore terminal using terminal module
+    terminal_show_cursor(); // Show cursor
 }
