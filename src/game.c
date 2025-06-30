@@ -67,6 +67,7 @@ void logic() {
 void game_init() {
     terminal_setup();
     terminal_hide_cursor();
+    terminal_clear_screen(); // Clear screen after setup
     terminal_init_buffer(WIDTH, HEIGHT); // Initialize the double buffer
     setup();
 }
@@ -88,6 +89,7 @@ void game_run() {
 
 // Shuts down the game: restores terminal settings and destroys buffer
 void game_shutdown() {
+    terminal_clear_screen(); // Clear screen before restoring terminal
     terminal_restore();
     terminal_show_cursor();
     terminal_destroy_buffer(); // Destroy the double buffer
