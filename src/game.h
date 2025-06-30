@@ -5,6 +5,7 @@
 #define WIDTH 80
 #define HEIGHT 24
 #define PADDLE_HEIGHT 4
+#define AI_PADDLE_SPEED 1 // New: AI paddle movement speed
 
 // Game state variables (declared as extern so render.c can access them)
 extern int ball_x, ball_y;

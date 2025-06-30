@@ -22,8 +22,8 @@ void reset_ball()
 {
     ball_x = WIDTH / 2;
     ball_y = HEIGHT / 2;
-    ball_dx = (rand() % 2 == 0) ? 1 : -1; // Random initial horizontal direction
-    ball_dy = (rand() % 2 == 0) ? 1 : -1; // Random initial vertical direction
+    ball_dx = (rand() % 2 == 0) ? 2 : -2; // Increased initial horizontal speed
+    ball_dy = (rand() % 2 == 0) ? 2 : -2; // Increased initial vertical speed
 }
 
 // Initializes game variables to their starting values
@@ -106,16 +106,20 @@ void logic()
     // Player 2 AI (right paddle)
     if (ball_y + 1 > paddle2_y + 1 + PADDLE_HEIGHT / 2)
     { // Ball is below paddle center
-        if (paddle2_y + PADDLE_HEIGHT < HEIGHT - 1)
+        if (paddle2_y + AI_PADDLE_SPEED + PADDLE_HEIGHT < HEIGHT - 1)
         { // Ensure paddle doesn't go below bottom border
-            paddle2_y++;
+            paddle2_y += AI_PADDLE_SPEED;
+        }
+        else
+        {
+            paddle2_y = HEIGHT - 1 - PADDLE_HEIGHT; // Snap to border
         }
     }
     else if (ball_y + 1 < paddle2_y + 1 + PADDLE_HEIGHT / 2)
     { // Ball is above paddle center
-        if (paddle2_y > 1)
+        if (paddle2_y - AI_PADDLE_SPEED > 1)
         { // Ensure paddle doesn't go above top border
-            paddle2_y--;
+            paddle2_y -= AI_PADDLE_SPEED;
         }
     }
 
