@@ -1,10 +1,9 @@
 #include "game.h"
-#include "terminal.h" // Include the new terminal module
+#include "terminal.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
-// Platform-specific headers for timing
 #ifdef _WIN32
 #include <windows.h>
 #else
@@ -31,33 +30,32 @@ void setup() {
     srand(time(NULL)); // Seed random number generator
 }
 
-// Draws the game board and elements
+// Draws the game board and elements to the buffer
 void draw() {
-    terminal_clear_screen(); // Clear screen using terminal module
-
-    // Draw top wall
-    for (int i = 0; i < WIDTH; i++) {
-        printf("#");
-    }
-    printf("\n");
-
-    // Draw game area borders
+    // Clear the buffer with spaces
     for (int y = 0; y < HEIGHT; y++) {
         for (int x = 0; x < WIDTH; x++) {
-            if (x == 0 || x == WIDTH - 1) { // Left and right borders
-                printf("|");
-            } else {
-                printf(" "); // Empty space
-            }
+            terminal_write_char_to_buffer(x, y, ' ');
         }
-        printf("\n");
     }
 
-    // Draw bottom wall
+    // Draw top wall to buffer
     for (int i = 0; i < WIDTH; i++) {
-        printf("#");
+        terminal_write_char_to_buffer(i, 0, '#');
     }
-    printf("\n");
+
+    // Draw game area borders to buffer
+    for (int y = 0; y < HEIGHT; y++) {
+        terminal_write_char_to_buffer(0, y, '|'); // Left border
+        terminal_write_char_to_buffer(WIDTH - 1, y, '|'); // Right border
+    }
+
+    // Draw bottom wall to buffer
+    for (int i = 0; i < WIDTH; i++) {
+        terminal_write_char_to_buffer(i, HEIGHT - 1, '#');
+    }
+
+    terminal_print_buffer(); // Print the entire buffer to the console
 }
 
 // Handles user input (to be implemented)
@@ -70,29 +68,30 @@ void logic() {
     // Placeholder for game logic
 }
 
-// Initializes the game: terminal setup and game state
+// Initializes the game: terminal setup, buffer setup, and game state
 void game_init() {
-    terminal_setup(); // Setup terminal using terminal module
-    terminal_hide_cursor(); // Hide cursor
+    terminal_setup();
+    terminal_hide_cursor();
+    terminal_init_buffer(WIDTH, HEIGHT); // Initialize the double buffer
     setup();
 }
 
 // Main game loop: continuously draws the game
 void game_run() {
-    while (1) { // Infinite loop for the game
-        draw(); // Redraw the game screen
+    while (1) {
+        draw();
 
-        // Game loop delay to control speed
 #ifdef _WIN32
-        Sleep(50); // Windows: 50 milliseconds
+        Sleep(50);
 #else
-        usleep(50000); // Unix-like: 50,000 microseconds (50 ms)
+        usleep(50000);
 #endif
     }
 }
 
-// Shuts down the game: restores terminal settings
+// Shuts down the game: restores terminal settings and destroys buffer
 void game_shutdown() {
-    terminal_restore(); // Restore terminal using terminal module
-    terminal_show_cursor(); // Show cursor
+    terminal_restore();
+    terminal_show_cursor();
+    terminal_destroy_buffer(); // Destroy the double buffer
 }
