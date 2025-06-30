@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -77,10 +78,34 @@ void input()
             paddle1_y++;
         }
         break;
-    case 27:     // ESC key to exit
-    case 'q':    // 'q' key to exit
-        exit(0); // Exit the game
+    case 27:  // ESC key to exit
+    case 'q': // 'q' key to exit
+    {
+        terminal_clear_screen(); // Clear screen for game over message
+        wchar_t message[50];
+        if (score1 > score2)
+        {
+            swprintf(message, sizeof(message) / sizeof(wchar_t), L"Player 1 Wins! Final Score: %d - %d", score1, score2);
+        }
+        else if (score2 > score1)
+        {
+            swprintf(message, sizeof(message) / sizeof(wchar_t), L"Player 2 Wins! Final Score: %d - %d", score2, score1);
+        }
+        else
+        {
+            swprintf(message, sizeof(message) / sizeof(wchar_t), L"It's a Draw! Final Score: %d - %d", score1, score2);
+        }
+
+        int msg_len = wcslen(message);
+        int msg_x = (WIDTH - msg_len) / 2;
+        int msg_y = HEIGHT / 2;
+
+        terminal_goto_xy(msg_x, msg_y);
+        wprintf(L"%ls", message);
+
+        exit(0); // Exit the game immediately
         break;
+    }
     }
 }
 
@@ -109,10 +134,6 @@ void logic()
         if (paddle2_y + AI_PADDLE_SPEED + PADDLE_HEIGHT < HEIGHT - 1)
         { // Ensure paddle doesn't go below bottom border
             paddle2_y += AI_PADDLE_SPEED;
-        }
-        else
-        {
-            paddle2_y = HEIGHT - 1 - PADDLE_HEIGHT; // Snap to border
         }
     }
     else if (ball_y + 1 < paddle2_y + 1 + PADDLE_HEIGHT / 2)
