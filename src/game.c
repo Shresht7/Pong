@@ -55,6 +55,9 @@ void draw() {
         terminal_write_char_to_buffer(i, HEIGHT - 1, '#');
     }
 
+    // Draw ball to buffer
+    terminal_write_char_to_buffer(ball_x, ball_y, 'O');
+
     terminal_print_buffer(); // Print the entire buffer to the console
 }
 
