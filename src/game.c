@@ -77,19 +77,8 @@ void input()
             paddle1_y++;
         }
         break;
-    case 'i':
-        if (paddle2_y > 1)
-        {
-            paddle2_y--;
-        }
-        break;
-    case 'k':
-        if (paddle2_y + PADDLE_HEIGHT < HEIGHT - 1)
-        {
-            paddle2_y++;
-        }
-        break;
     case 27:     // ESC key to exit
+    case 'q':    // 'q' key to exit
         exit(0); // Exit the game
         break;
     }
@@ -103,7 +92,7 @@ void logic()
 
     // Ball collision with top and bottom walls (adjusted for shifted game area)
     if (ball_y <= 1 || ball_y >= HEIGHT - 2)
-    {                  // Top border is at y=1, bottom at HEIGHT-1
+    {
         ball_dy *= -1; // Reverse vertical direction
     }
 
@@ -112,6 +101,22 @@ void logic()
     {
         ball_dx *= -1;               // Reverse horizontal direction
         ball_dy += (rand() % 3) - 1; // Add random vertical change (-1, 0, or 1)
+    }
+
+    // Player 2 AI (right paddle)
+    if (ball_y + 1 > paddle2_y + 1 + PADDLE_HEIGHT / 2)
+    { // Ball is below paddle center
+        if (paddle2_y + PADDLE_HEIGHT < HEIGHT - 1)
+        { // Ensure paddle doesn't go below bottom border
+            paddle2_y++;
+        }
+    }
+    else if (ball_y + 1 < paddle2_y + 1 + PADDLE_HEIGHT / 2)
+    { // Ball is above paddle center
+        if (paddle2_y > 1)
+        { // Ensure paddle doesn't go above top border
+            paddle2_y--;
+        }
     }
 
     // Ball collision with right paddle
@@ -123,12 +128,12 @@ void logic()
 
     // Scoring
     if (ball_x <= 1)
-    { // Ball went past left paddle
+    {
         score2++;
         reset_ball(); // Reset ball only
     }
     if (ball_x >= WIDTH - 2)
-    { // Ball went past right paddle
+    {
         score1++;
         reset_ball(); // Reset ball only
     }
