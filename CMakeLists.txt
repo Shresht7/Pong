@@ -7,4 +7,4 @@ project(Pong C)
 set(CMAKE_C_STANDARD 99)
 
 # Add the executable and specify its source file
-add_executable(pong main.c)
+add_executable(pong main.c game.c)
