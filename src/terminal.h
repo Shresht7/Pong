@@ -1,6 +1,8 @@
 #ifndef TERMINAL_H
 #define TERMINAL_H
 
+#include <wchar.h> // For wchar_t
+
 // Function declarations for terminal control
 void terminal_setup();
 void terminal_restore();
@@ -14,7 +16,7 @@ void terminal_show_cursor();
 // Double buffering functions
 void terminal_init_buffer(int width, int height);
 void terminal_destroy_buffer();
-void terminal_write_char_to_buffer(int x, int y, char c);
+void terminal_write_char_to_buffer(int x, int y, wchar_t c); // Use wchar_t
 void terminal_print_buffer();
 
 #endif // TERMINAL_H

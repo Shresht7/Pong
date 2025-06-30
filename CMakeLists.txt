@@ -5,6 +5,9 @@ project(Pong C)
 
 # Set the C standard to C99
 set(CMAKE_C_STANDARD 99)
+if(MSVC)
+    add_compile_options(/utf-8)
+endif()
 
 # Add include directory
 include_directories(src)

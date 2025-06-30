@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <locale.h> // For setlocale
 
 #ifdef _WIN32
 #include <windows.h>
@@ -19,7 +20,7 @@ static struct termios original_termios;
 #endif
 
 // Double buffering variables
-static char** buffer = NULL;
+static wchar_t** buffer = NULL; // Use wchar_t for buffer
 static int buffer_width = 0;
 static int buffer_height = 0;
 
@@ -29,18 +30,22 @@ void terminal_setup() {
     hConsole = GetStdHandle(STD_INPUT_HANDLE);
     GetConsoleMode(hConsole, &original_console_mode);
     SetConsoleMode(hConsole, original_console_mode & ~(ENABLE_LINE_INPUT | ENABLE_ECHO_INPUT));
+    // Set console output code page to UTF-8 for wide characters
+    SetConsoleOutputCP(CP_UTF8);
 #else
     tcgetattr(STDIN_FILENO, &original_termios);
     struct termios raw = original_termios;
     raw.c_lflag &= ~(ICANON | ECHO);
     tcsetattr(STDIN_FILENO, TCSANOW, &raw);
 #endif
+    setlocale(LC_ALL, ""); // Set locale for wide character output
 }
 
 // Restores the terminal to its original mode
 void terminal_restore() {
 #ifdef _WIN32
     SetConsoleMode(hConsole, original_console_mode);
+    SetConsoleOutputCP(437); // Restore default code page
 #else
     tcsetattr(STDIN_FILENO, TCSANOW, &original_termios);
 #endif
@@ -51,7 +56,7 @@ void terminal_clear_screen() {
 #ifdef _WIN32
     system("cls");
 #else
-    printf("\033[2J\033[H");
+    wprintf(L"\033[2J\033[H"); // Use wprintf for wide characters
 #endif
 }
 
@@ -61,29 +66,31 @@ void terminal_goto_xy(int x, int y) {
     COORD coord = {(SHORT)x, (SHORT)y};
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 #else
-    printf("\033[%d;%dH", y + 1, x + 1);
+    wprintf(L"\033[%d;%dH", y + 1, x + 1); // Use wprintf
 #endif
 }
 
 // Hides the terminal cursor
 void terminal_hide_cursor() {
-    printf("\033[?25l"); // ANSI escape code to hide cursor
+    wprintf(L"\033[?25l"); // ANSI escape code to hide cursor
 }
 
 // Shows the terminal cursor
 void terminal_show_cursor() {
-    printf("\033[?25h"); // ANSI escape code to show cursor
+    wprintf(L"\033[?25h"); // ANSI escape code to show cursor
 }
 
 // Initializes the double buffer
 void terminal_init_buffer(int width, int height) {
     buffer_width = width;
     buffer_height = height;
-    buffer = (char**)malloc(height * sizeof(char*));
+    buffer = (wchar_t**)malloc(height * sizeof(wchar_t*));
     for (int i = 0; i < height; i++) {
-        buffer[i] = (char*)malloc((width + 1) * sizeof(char)); // +1 for null terminator
-        memset(buffer[i], ' ', width); // Initialize with spaces
-        buffer[i][width] = '\0'; // Null-terminate each row
+        buffer[i] = (wchar_t*)malloc((width + 1) * sizeof(wchar_t)); // +1 for null terminator
+        for (int j = 0; j < width; j++) {
+            buffer[i][j] = L' '; // Initialize with wide spaces
+        }
+        buffer[i][width] = L'\0'; // Null-terminate each row with wide null
     }
 }
 
@@ -99,7 +106,7 @@ void terminal_destroy_buffer() {
 }
 
 // Writes a character to the buffer at a specific position
-void terminal_write_char_to_buffer(int x, int y, char c) {
+void terminal_write_char_to_buffer(int x, int y, wchar_t c) {
     if (x >= 0 && x < buffer_width && y >= 0 && y < buffer_height) {
         buffer[y][x] = c;
     }
@@ -109,6 +116,6 @@ void terminal_write_char_to_buffer(int x, int y, char c) {
 void terminal_print_buffer() {
     terminal_goto_xy(0, 0); // Move cursor to top-left before printing
     for (int i = 0; i < buffer_height; i++) {
-        printf("%s\n", buffer[i]);
+        wprintf(L"%ls\n", buffer[i]); // Use wprintf for wide string
     }
 }

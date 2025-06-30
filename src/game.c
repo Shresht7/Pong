@@ -35,28 +35,32 @@ void draw() {
     // Clear the buffer with spaces
     for (int y = 0; y < HEIGHT; y++) {
         for (int x = 0; x < WIDTH; x++) {
-            terminal_write_char_to_buffer(x, y, ' ');
+            terminal_write_char_to_buffer(x, y, L' '); // Use L' ' for wide space
         }
     }
 
-    // Draw top wall to buffer
-    for (int i = 0; i < WIDTH; i++) {
-        terminal_write_char_to_buffer(i, 0, '#');
+    // Draw top border
+    terminal_write_char_to_buffer(0, 0, 0x250C); // Top-left corner
+    for (int i = 1; i < WIDTH - 1; i++) {
+        terminal_write_char_to_buffer(i, 0, 0x2500); // Horizontal line
+    }
+    terminal_write_char_to_buffer(WIDTH - 1, 0, 0x2510); // Top-right corner
+
+    // Draw side borders
+    for (int y = 1; y < HEIGHT - 1; y++) {
+        terminal_write_char_to_buffer(0, y, 0x2502); // Left vertical line
+        terminal_write_char_to_buffer(WIDTH - 1, y, 0x2502); // Right vertical line
     }
 
-    // Draw game area borders to buffer
-    for (int y = 0; y < HEIGHT; y++) {
-        terminal_write_char_to_buffer(0, y, '|'); // Left border
-        terminal_write_char_to_buffer(WIDTH - 1, y, '|'); // Right border
+    // Draw bottom border
+    terminal_write_char_to_buffer(0, HEIGHT - 1, 0x2514); // Bottom-left corner
+    for (int i = 1; i < WIDTH - 1; i++) {
+        terminal_write_char_to_buffer(i, HEIGHT - 1, 0x2500); // Horizontal line
     }
+    terminal_write_char_to_buffer(WIDTH - 1, HEIGHT - 1, 0x2518); // Bottom-right corner
 
-    // Draw bottom wall to buffer
-    for (int i = 0; i < WIDTH; i++) {
-        terminal_write_char_to_buffer(i, HEIGHT - 1, '#');
-    }
-
-    // Draw ball to buffer
-    terminal_write_char_to_buffer(ball_x, ball_y, 'O');
+    // Draw ball to buffer using Unicode bullet point
+    terminal_write_char_to_buffer(ball_x, ball_y, 0x2022); // U+2022 for bullet
 
     terminal_print_buffer(); // Print the entire buffer to the console
 }
