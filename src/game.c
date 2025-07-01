@@ -148,14 +148,14 @@ void logic()
     }
 
     // Ball collision with left paddle
-    if (ball_x == LEFT_PADDLE_X + 1 && ball_y >= paddle1_y + 1 && ball_y < paddle1_y + 1 + PADDLE_HEIGHT)
+    if (ball_dx < 0 && ball_x + ball_dx <= LEFT_PADDLE_X + 1 && ball_y >= paddle1_y + 1 && ball_y < paddle1_y + 1 + PADDLE_HEIGHT)
     {
         ball_dx *= -1;               // Reverse horizontal direction
         ball_dy += (rand() % 3) - 1; // Add random vertical change (-1, 0, or 1)
     }
 
     // Ball collision with right paddle
-    if (ball_x == RIGHT_PADDLE_X && ball_y >= paddle2_y + 1 && ball_y < paddle2_y + 1 + PADDLE_HEIGHT)
+    if (ball_dx > 0 && ball_x + ball_dx >= RIGHT_PADDLE_X && ball_y >= paddle2_y + 1 && ball_y < paddle2_y + 1 + PADDLE_HEIGHT)
     {
         ball_dx *= -1;               // Reverse horizontal direction
         ball_dy += (rand() % 3) - 1; // Add random vertical change (-1, 0, or 1)
