@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "game.h"
 #include "terminal.h"
@@ -20,6 +21,10 @@ int ball_dx, ball_dy;
 int paddle1_y, paddle2_y;
 int score1, score2;
 
+// Game state variables
+GameState current_state;
+bool is_running;
+
 // Ball reset timer
 int ball_reset_timer = 0;
 
@@ -36,6 +41,9 @@ void reset_ball()
 // Initializes game variables to their starting values
 void setup()
 {
+    is_running = true;
+    current_state = STATE_PLAYING;
+
     ai_init();
     reset_ball(); // Reset ball position and direction
     paddle1_y = HEIGHT / 2 - PADDLE_HEIGHT / 2;
@@ -54,16 +62,23 @@ void draw()
     {
         for (int x = 0; x < WIDTH; x++)
         {
-            terminal_write_char_to_buffer(x, y, L' '); // Use L' ' for wide space
+            terminal_write_char_to_buffer(x, y, L' ');
         }
     }
 
-    render_borders();
-    render_ball();
-    render_paddles();
-    render_scores();
+    if (current_state == STATE_PLAYING)
+    {
+        render_borders();
+        render_ball();
+        render_paddles();
+        render_scores();
+    }
+    else if (current_state == STATE_GAME_OVER)
+    {
+        render_game_over_screen();
+    }
 
-    terminal_print_buffer(); // Print the entire buffer to the console
+    terminal_print_buffer();
 }
 
 // Handles user input
@@ -71,58 +86,51 @@ void input()
 {
     int key = terminal_read_key();
 
-    switch (key)
+    if (current_state == STATE_PLAYING)
     {
-    case 'w':
-        if (paddle1_y > TOP_WALL_Y)
-        { // Ensure paddle doesn't go above top border
-            paddle1_y--;
+        switch (key)
+        {
+        case 'w':
+            if (paddle1_y > TOP_WALL_Y)
+            {
+                paddle1_y--;
+            }
+            break;
+        case 's':
+            if (paddle1_y + PADDLE_HEIGHT < BOTTOM_WALL_Y)
+            {
+                paddle1_y++;
+            }
+            break;
+        case 27: // ESC key
+        case 'q':  // 'q' key
+            game_over();
+            break;
         }
-        break;
-    case 's':
-        if (paddle1_y + PADDLE_HEIGHT < BOTTOM_WALL_Y)
-        { // Ensure paddle doesn't go below bottom border
-            paddle1_y++;
+    }
+    else if (current_state == STATE_GAME_OVER)
+    {
+        if (key != -1) // Any key press
+        {
+            is_running = false;
         }
-        break;
-    case 27:         // ESC key to exit
-    case 'q':        // 'q' key to exit
-        game_over(); // Call game_over function
-        break;
     }
 }
 
 // Displays game over message and exits
 void game_over()
 {
-    terminal_clear_screen(); // Clear screen for game over message
-    wchar_t message[50];
-    if (score1 >= MAX_SCORE)
-    {
-        swprintf(message, sizeof(message) / sizeof(wchar_t), L"Player 1 Wins! Final Score: %d - %d", score1, score2);
-    }
-    else if (score2 >= MAX_SCORE)
-    {
-        swprintf(message, sizeof(message) / sizeof(wchar_t), L"Player 2 Wins! Final Score: %d - %d", score2, score1);
-    }
-    else
-    {
-        swprintf(message, sizeof(message) / sizeof(wchar_t), L"Game Over! Final Score: %d - %d", score1, score2);
-    }
-
-    int msg_len = wcslen(message);
-    int msg_x = (WIDTH - msg_len) / 2;
-    int msg_y = HEIGHT / 2;
-
-    terminal_goto_xy(msg_x, msg_y);
-    wprintf(L"%ls", message);
-
-    exit(0); // Exit the game immediately
+    current_state = STATE_GAME_OVER;
 }
 
 // Updates game state and logic
 void logic()
 {
+    if (current_state != STATE_PLAYING)
+    {
+        return; // Don't run game logic if not playing
+    }
+
     ai_update();
     if (ball_reset_timer > 0)
     {
@@ -187,7 +195,7 @@ void game_init()
 // Main game loop: continuously draws the game
 void game_run()
 {
-    while (1)
+    while (is_running)
     {
         draw();
         input(); // Call input handler

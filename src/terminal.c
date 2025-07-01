@@ -99,9 +99,27 @@ void terminal_init_buffer(int width, int height)
     buffer_width = width;
     buffer_height = height;
     buffer = (wchar_t **)malloc(height * sizeof(wchar_t *));
+    if (buffer == NULL)
+    {
+        fprintf(stderr, "Error: Failed to allocate memory for buffer rows.\n");
+        exit(1);
+    }
+
     for (int i = 0; i < height; i++)
     {
         buffer[i] = (wchar_t *)malloc((width + 1) * sizeof(wchar_t)); // +1 for null terminator
+        if (buffer[i] == NULL)
+        {
+            fprintf(stderr, "Error: Failed to allocate memory for buffer columns.\n");
+            // Free previously allocated rows
+            for (int j = 0; j < i; j++)
+            {
+                free(buffer[j]);
+            }
+            free(buffer);
+            exit(1);
+        }
+
         for (int j = 0; j < width; j++)
         {
             buffer[i][j] = L' '; // Initialize with wide spaces

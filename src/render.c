@@ -93,3 +93,39 @@ void render_scores()
         terminal_write_char_to_buffer(score2_x + i, 0, score2_str[i]);
     }
 }
+
+void render_game_over_screen()
+{
+    wchar_t message[50];
+    if (score1 >= MAX_SCORE)
+    {
+        swprintf(message, sizeof(message) / sizeof(wchar_t), L"Player 1 Wins! Final Score: %d - %d", score1, score2);
+    }
+    else if (score2 >= MAX_SCORE)
+    {
+        swprintf(message, sizeof(message) / sizeof(wchar_t), L"Player 2 Wins! Final Score: %d - %d", score2, score1);
+    }
+    else
+    {
+        swprintf(message, sizeof(message) / sizeof(wchar_t), L"Game Over! Final Score: %d - %d", score1, score2);
+    }
+
+    int msg_len = wcslen(message);
+    int msg_x = (WIDTH - msg_len) / 2;
+    int msg_y = HEIGHT / 2;
+
+    for (int i = 0; i < msg_len; i++)
+    {
+        terminal_write_char_to_buffer(msg_x + i, msg_y, message[i]);
+    }
+
+    const wchar_t *prompt = L"Press any key to exit...";
+    int prompt_len = wcslen(prompt);
+    int prompt_x = (WIDTH - prompt_len) / 2;
+    int prompt_y = msg_y + 2;
+
+    for (int i = 0; i < prompt_len; i++)
+    {
+        terminal_write_char_to_buffer(prompt_x + i, prompt_y, prompt[i]);
+    }
+}

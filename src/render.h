@@ -15,7 +15,8 @@ extern int score1, score2;
 
 void render_borders();
 void render_ball();
-void render_paddles(); // Will add this in the next step
+void render_paddles();
 void render_scores();
+void render_game_over_screen();
 
 #endif // RENDER_H

@@ -1,6 +1,8 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include <stdbool.h>
+
 // Game constants: Define the dimensions of the game area and paddle height
 #define WIDTH 80
 #define HEIGHT 24
@@ -31,6 +33,15 @@ extern int ball_dx, ball_dy;
 extern int paddle1_y, paddle2_y;
 extern int score1, score2;
 extern int ball_reset_timer;
+
+// Game state management
+typedef enum {
+    STATE_PLAYING,
+    STATE_GAME_OVER
+} GameState;
+
+extern GameState current_state;
+extern bool is_running; // Controls the main application loop
 
 // Function declarations: Public functions exposed by the game module
 void game_init();     // Initializes the game state and terminal settings
