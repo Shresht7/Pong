@@ -51,7 +51,16 @@ void render_borders()
 // Renders the ball to the buffer
 void render_ball()
 {
-    terminal_write_char_to_buffer(ball_x, ball_y + 1, BALL_CHAR);
+    // Only render the ball if the reset timer is not active or if it's an "on" blink cycle
+    if (ball_reset_timer == 0 || (ball_reset_timer % 4 < 2)) // Blink every 2 frames (on for 2, off for 2)
+    {
+        terminal_write_char_to_buffer(ball_x, ball_y + 1, BALL_CHAR);
+    }
+    else
+    {
+        // Draw a space to make it "blink off"
+        terminal_write_char_to_buffer(ball_x, ball_y + 1, L' ');
+    }
 }
 
 // Renders the paddles to the buffer
