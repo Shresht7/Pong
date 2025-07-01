@@ -8,6 +8,19 @@
 #define AI_PADDLE_SPEED 1 // AI paddle movement speed (per move)
 #define MAX_SCORE 5       // Score needed to win the game
 
+// Gameplay constants
+#define GAME_SPEED_MS 50
+#define INITIAL_BALL_SPEED 2
+#define BALL_RESET_DELAY 40 // In game ticks (40 * 50ms = 2s)
+
+// Wall and paddle positions
+#define TOP_WALL_Y 1
+#define BOTTOM_WALL_Y (HEIGHT - 1)
+#define LEFT_PADDLE_X 1
+#define RIGHT_PADDLE_X (WIDTH - 2)
+#define LEFT_SCORE_LIMIT 1
+#define RIGHT_SCORE_LIMIT (WIDTH - 2)
+
 // Game state variables (declared as extern so render.c can access them)
 extern int ball_x, ball_y;
 extern int ball_dx, ball_dy;

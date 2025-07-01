@@ -25,27 +25,27 @@ const wchar_t BALL_CHAR = 0x2022;           // •
 void render_borders()
 {
     // Draw top border
-    terminal_write_char_to_buffer(0, 1, BORDER_TOP_LEFT); // Top-left corner
+    terminal_write_char_to_buffer(0, TOP_WALL_Y, BORDER_TOP_LEFT); // Top-left corner
     for (int i = 1; i < WIDTH - 1; i++)
     {
-        terminal_write_char_to_buffer(i, 1, BORDER_HORIZONTAL); // Horizontal line
+        terminal_write_char_to_buffer(i, TOP_WALL_Y, BORDER_HORIZONTAL); // Horizontal line
     }
-    terminal_write_char_to_buffer(WIDTH - 1, 1, BORDER_TOP_RIGHT); // Top-right corner
+    terminal_write_char_to_buffer(WIDTH - 1, TOP_WALL_Y, BORDER_TOP_RIGHT); // Top-right corner
 
     // Draw side borders
-    for (int y = 1 + 1; y < HEIGHT - 1; y++)
+    for (int y = TOP_WALL_Y + 1; y < BOTTOM_WALL_Y; y++)
     {
         terminal_write_char_to_buffer(0, y, BORDER_VERTICAL);         // Left vertical line
         terminal_write_char_to_buffer(WIDTH - 1, y, BORDER_VERTICAL); // Right vertical line
     }
 
     // Draw bottom border
-    terminal_write_char_to_buffer(0, HEIGHT - 1, BORDER_BOTTOM_LEFT); // Bottom-left corner
+    terminal_write_char_to_buffer(0, BOTTOM_WALL_Y, BORDER_BOTTOM_LEFT); // Bottom-left corner
     for (int i = 1; i < WIDTH - 1; i++)
     {
-        terminal_write_char_to_buffer(i, HEIGHT - 1, BORDER_HORIZONTAL); // Horizontal line
+        terminal_write_char_to_buffer(i, BOTTOM_WALL_Y, BORDER_HORIZONTAL); // Horizontal line
     }
-    terminal_write_char_to_buffer(WIDTH - 1, HEIGHT - 1, BORDER_BOTTOM_RIGHT); // Bottom-right corner
+    terminal_write_char_to_buffer(WIDTH - 1, BOTTOM_WALL_Y, BORDER_BOTTOM_RIGHT); // Bottom-right corner
 }
 
 // Renders the ball to the buffer
@@ -60,13 +60,13 @@ void render_paddles()
     // Paddle 1 (left)
     for (int i = 0; i < PADDLE_HEIGHT; i++)
     {
-        terminal_write_char_to_buffer(1, paddle1_y + 1 + i, PADDLE_CHAR);
+        terminal_write_char_to_buffer(LEFT_PADDLE_X, paddle1_y + 1 + i, PADDLE_CHAR);
     }
 
     // Paddle 2 (right)
     for (int i = 0; i < PADDLE_HEIGHT; i++)
     {
-        terminal_write_char_to_buffer(WIDTH - 2, paddle2_y + 1 + i, PADDLE_CHAR);
+        terminal_write_char_to_buffer(RIGHT_PADDLE_X, paddle2_y + 1 + i, PADDLE_CHAR);
     }
 }
 
