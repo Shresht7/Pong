@@ -36,6 +36,7 @@ void reset_ball()
 // Initializes game variables to their starting values
 void setup()
 {
+    ai_init();
     reset_ball(); // Reset ball position and direction
     paddle1_y = HEIGHT / 2 - PADDLE_HEIGHT / 2;
     paddle2_y = HEIGHT / 2 - PADDLE_HEIGHT / 2;

@@ -8,6 +8,10 @@
 #define AI_PADDLE_SPEED 1 // AI paddle movement speed (per move)
 #define MAX_SCORE 5       // Score needed to win the game
 
+// AI behavior
+#define AI_REACTION_PROBABILITY 85 // Percentage (0-100) chance to update target position each frame
+#define AI_INACCURACY_AMOUNT 2     // Max random offset from the ball's actual position
+
 // Gameplay constants
 #define GAME_SPEED_MS 50
 #define INITIAL_BALL_SPEED 2
