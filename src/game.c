@@ -1,10 +1,12 @@
-#include "game.h"
-#include "terminal.h"
-#include "render.h" // Include the new render module
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+
+#include "game.h"
+#include "terminal.h"
+#include "render.h"
+#include "ai.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -120,6 +122,7 @@ void game_over()
 // Updates game state and logic
 void logic()
 {
+    ai_update();
     if (ball_reset_timer > 0)
     {
         ball_reset_timer--;
@@ -140,26 +143,6 @@ void logic()
     {
         ball_dx *= -1;               // Reverse horizontal direction
         ball_dy += (rand() % 3) - 1; // Add random vertical change (-1, 0, or 1)
-    }
-
-    // Player 2 AI (right paddle)
-    if (ball_y + 1 > paddle2_y + 1 + PADDLE_HEIGHT / 2)
-    { // Ball is below paddle center
-        if (paddle2_y + AI_PADDLE_SPEED + PADDLE_HEIGHT < BOTTOM_WALL_Y)
-        { // Ensure paddle doesn't go below bottom border
-            paddle2_y += AI_PADDLE_SPEED;
-        }
-        else
-        {
-            paddle2_y = BOTTOM_WALL_Y - PADDLE_HEIGHT; // Snap to border
-        }
-    }
-    else if (ball_y + 1 < paddle2_y + 1 + PADDLE_HEIGHT / 2)
-    { // Ball is above paddle center
-        if (paddle2_y - AI_PADDLE_SPEED > TOP_WALL_Y)
-        { // Ensure paddle doesn't go above top border
-            paddle2_y -= AI_PADDLE_SPEED;
-        }
     }
 
     // Ball collision with right paddle
