@@ -2,6 +2,8 @@
 
 Pong game implemented in C, rendered directly in the terminal.
 
+![Game](./screenshot.png)
+
 ## Prerequisites
 
 To build and run this project, you will need:
