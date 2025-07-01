@@ -123,24 +123,14 @@ void game_over()
     current_state = STATE_GAME_OVER;
 }
 
-// Updates game state and logic
-void logic()
+void update_ball_position()
 {
-    if (current_state != STATE_PLAYING)
-    {
-        return; // Don't run game logic if not playing
-    }
-
-    ai_update();
-    if (ball_reset_timer > 0)
-    {
-        ball_reset_timer--;
-        return; // Don't move ball if timer is active
-    }
-
     ball_x += ball_dx; // Move ball horizontally
     ball_y += ball_dy; // Move ball vertically
+}
 
+void handle_ball_collisions()
+{
     // Ball collision with top and bottom walls (adjusted for shifted game area)
     if (ball_y <= TOP_WALL_Y || ball_y >= BOTTOM_WALL_Y - 1)
     {
@@ -160,7 +150,10 @@ void logic()
         ball_dx *= -1;               // Reverse horizontal direction
         ball_dy += (rand() % 3) - 1; // Add random vertical change (-1, 0, or 1)
     }
+}
 
+void check_scoring()
+{
     // Scoring
     if (ball_x <= LEFT_SCORE_LIMIT)
     {
@@ -180,6 +173,27 @@ void logic()
             game_over();
         }
     }
+}
+
+// Updates game state and logic
+void logic()
+{
+    if (current_state != STATE_PLAYING)
+    {
+        return; // Don't run game logic if not playing
+    }
+
+    ai_update();
+
+    if (ball_reset_timer > 0)
+    {
+        ball_reset_timer--;
+        return; // Don't move ball if timer is active
+    }
+
+    update_ball_position();
+    handle_ball_collisions();
+    check_scoring();
 }
 
 // Initializes the game: terminal setup, buffer setup, and game state

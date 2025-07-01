@@ -53,6 +53,11 @@ void setup();
 void draw();
 void input();
 void logic();
-void game_over(); // Declare new game_over function
+void game_over();
+
+// Refactored logic functions
+void update_ball_position();
+void handle_ball_collisions();
+void check_scoring();
 
 #endif // GAME_H
