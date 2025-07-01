@@ -19,4 +19,8 @@ void render_paddles();
 void render_scores();
 void render_game_over_screen();
 
+// Helper functions for rendering
+void render_single_paddle(int x, int y);
+void render_single_score(int x, int y, const wchar_t *score_str);
+
 #endif // RENDER_H

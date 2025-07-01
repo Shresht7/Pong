@@ -55,18 +55,27 @@ void render_ball()
 }
 
 // Renders the paddles to the buffer
+void render_single_paddle(int x, int y)
+{
+    for (int i = 0; i < PADDLE_HEIGHT; i++)
+    {
+        terminal_write_char_to_buffer(x, y + 1 + i, PADDLE_CHAR);
+    }
+}
+
+// Renders the paddles to the buffer
 void render_paddles()
 {
-    // Paddle 1 (left)
-    for (int i = 0; i < PADDLE_HEIGHT; i++)
-    {
-        terminal_write_char_to_buffer(LEFT_PADDLE_X, paddle1_y + 1 + i, PADDLE_CHAR);
-    }
+    render_single_paddle(LEFT_PADDLE_X, paddle1_y);
+    render_single_paddle(RIGHT_PADDLE_X, paddle2_y);
+}
 
-    // Paddle 2 (right)
-    for (int i = 0; i < PADDLE_HEIGHT; i++)
+void render_single_score(int x, int y, const wchar_t *score_str)
+{
+    int score_len = wcslen(score_str);
+    for (int i = 0; i < score_len; i++)
     {
-        terminal_write_char_to_buffer(RIGHT_PADDLE_X, paddle2_y + 1 + i, PADDLE_CHAR);
+        terminal_write_char_to_buffer(x + i, y, score_str[i]);
     }
 }
 
@@ -76,22 +85,14 @@ void render_scores()
     // Player 1 score (left half)
     wchar_t score1_str[20];
     swprintf(score1_str, sizeof(score1_str) / sizeof(wchar_t), L"P1: %d", score1);
-    int score1_len = wcslen(score1_str);
-    int score1_x = (WIDTH / 2 - score1_len) / 2;
-    for (int i = 0; i < score1_len; i++)
-    {
-        terminal_write_char_to_buffer(score1_x + i, 0, score1_str[i]);
-    }
+    int score1_x = (WIDTH / 2 - wcslen(score1_str)) / 2;
+    render_single_score(score1_x, 0, score1_str);
 
     // Player 2 score (right half)
     wchar_t score2_str[20];
     swprintf(score2_str, sizeof(score2_str) / sizeof(wchar_t), L"P2: %d", score2);
-    int score2_len = wcslen(score2_str);
-    int score2_x = WIDTH / 2 + (WIDTH / 2 - score2_len) / 2;
-    for (int i = 0; i < score2_len; i++)
-    {
-        terminal_write_char_to_buffer(score2_x + i, 0, score2_str[i]);
-    }
+    int score2_x = WIDTH / 2 + (WIDTH / 2 - wcslen(score2_str)) / 2;
+    render_single_score(score2_x, 0, score2_str);
 }
 
 void render_game_over_screen()
