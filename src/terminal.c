@@ -8,6 +8,8 @@
 #ifdef _WIN32
 #include <windows.h>
 #include <conio.h> // For _kbhit and _getch
+#include <io.h>    // For _setmode
+#include <fcntl.h> // For _O_U16TEXT
 #else
 #include <termios.h>
 #include <unistd.h>
@@ -32,6 +34,7 @@ static int buffer_height = 0;
 void terminal_setup()
 {
 #ifdef _WIN32
+    _setmode(_fileno(stdout), _O_U16TEXT); // Set stdout to Unicode
     hConsole = GetStdHandle(STD_INPUT_HANDLE);
     GetConsoleMode(hConsole, &original_console_mode);
     SetConsoleMode(hConsole, original_console_mode & ~(ENABLE_LINE_INPUT | ENABLE_ECHO_INPUT));
