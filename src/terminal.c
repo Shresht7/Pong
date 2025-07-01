@@ -1,8 +1,9 @@
-#include "terminal.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <locale.h> // For setlocale
+
+#include "terminal.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -23,7 +24,7 @@ static struct termios original_termios;
 #endif
 
 // Double buffering variables
-static wchar_t **buffer = NULL; // Use wchar_t for buffer
+static wchar_t **buffer = NULL;
 static int buffer_width = 0;
 static int buffer_height = 0;
 
@@ -62,7 +63,7 @@ void terminal_clear_screen()
 #ifdef _WIN32
     system("cls");
 #else
-    wprintf(L"\033[2J\033[H"); // Use wprintf for wide characters
+    wprintf(L"\033[2J\033[H");
 #endif
 }
 
@@ -73,20 +74,20 @@ void terminal_goto_xy(int x, int y)
     COORD coord = {(SHORT)x, (SHORT)y};
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 #else
-    wprintf(L"\033[%d;%dH", y + 1, x + 1); // Use wprintf
+    wprintf(L"\033[%d;%dH", y + 1, x + 1);
 #endif
 }
 
 // Hides the terminal cursor
 void terminal_hide_cursor()
 {
-    wprintf(L"\033[?25l"); // ANSI escape code to hide cursor
+    wprintf(L"\033[?25l");
 }
 
 // Shows the terminal cursor
 void terminal_show_cursor()
 {
-    wprintf(L"\033[?25h"); // ANSI escape code to show cursor
+    wprintf(L"\033[?25h");
 }
 
 // Initializes the double buffer
@@ -135,11 +136,11 @@ void terminal_print_buffer()
     terminal_goto_xy(0, 0); // Move cursor to top-left before printing
     for (int i = 0; i < buffer_height; i++)
     {
-        wprintf(L"%ls\n", buffer[i]); // Use wprintf for wide string
+        wprintf(L"%ls\n", buffer[i]);
     }
 }
 
-// Reads a key press without blocking
+// Reads a key press without blocking (returns -1 if no key is pressed)
 int terminal_read_key()
 {
 #ifdef _WIN32

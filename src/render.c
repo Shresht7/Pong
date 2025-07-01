@@ -1,14 +1,17 @@
-#include "render.h"
-#include "terminal.h"
 #include <stdio.h>
 #include <wchar.h>
 
+#include "terminal.h"
+#include "render.h"
+
 // Game state variables (declared as extern in render.h)
+
 extern int ball_x, ball_y;
 extern int paddle1_y, paddle2_y;
 extern int score1, score2;
 
 // Unicode characters as constants with visual representation
+
 const wchar_t BORDER_HORIZONTAL = 0x2500;   // ─
 const wchar_t BORDER_VERTICAL = 0x2502;     // │
 const wchar_t BORDER_TOP_LEFT = 0x250C;     // ┌
@@ -30,7 +33,7 @@ void render_borders()
     terminal_write_char_to_buffer(WIDTH - 1, 1, BORDER_TOP_RIGHT); // Top-right corner
 
     // Draw side borders
-    for (int y = 2; y < HEIGHT - 1; y++)
+    for (int y = 1 + 1; y < HEIGHT - 1; y++)
     {
         terminal_write_char_to_buffer(0, y, BORDER_VERTICAL);         // Left vertical line
         terminal_write_char_to_buffer(WIDTH - 1, y, BORDER_VERTICAL); // Right vertical line
