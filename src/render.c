@@ -19,7 +19,7 @@ const wchar_t BORDER_TOP_RIGHT = 0x2510;    // ┐
 const wchar_t BORDER_BOTTOM_LEFT = 0x2514;  // └
 const wchar_t BORDER_BOTTOM_RIGHT = 0x2518; // ┘
 const wchar_t PADDLE_CHAR = 0x2588;         // █
-const wchar_t BALL_CHAR = 0x2022;           // •
+const wchar_t BALL_CHAR = 0x25CF;           // ●
 
 // Renders the game borders to the buffer
 void render_borders()
